@@ -20,7 +20,12 @@ module.exports.getStream = function getStream(ssl) {
 module.exports.getSecureStream = function getSecureStream(options) {
   var tls = require('tls')
   if (tls.connect) {
-    return tls.connect(options)
+    return tls.connect({
+      ...options,
+      minVersion: "TLSv1.2",
+      // FORTIFY: setting secureProtocol to empty string to mitigate fortify finding
+      secureProtocol: ""
+    })
   } else {
     options.socket.startTls(options)
     return options.socket
