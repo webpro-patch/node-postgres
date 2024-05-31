@@ -11,6 +11,7 @@ try {
 var TypeOverrides = require('../type-overrides')
 var EventEmitter = require('events').EventEmitter
 var util = require('util')
+var { once } = require("events")
 var ConnectionParameters = require('../connection-parameters')
 
 var NativeQuery = require('./query')
@@ -101,7 +102,7 @@ Client.prototype._connect = function (cb) {
       self._connected = true
 
       // handle connection errors from the native layer
-      self.native.on('error', function (err) {
+      once(self.native, 'error').then(function (err) {
         self._queryable = false
         self._errorAllQueries(err)
         self.emit('error', err)
